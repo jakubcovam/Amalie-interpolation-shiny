@@ -15,6 +15,6 @@ The user has an option of rendering interpolation map, which is still under deve
 
 ---
 
-The input data are available upon request at `jakubcovam@fzp.czu.cz`.
+The input data are not part of this repository.
 
 ---
