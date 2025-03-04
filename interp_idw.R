@@ -1,6 +1,9 @@
 # ---------------------------------------------
 # Inverse Distance Weighting - IDW
 # ---------------------------------------------
+#
+# For each grid cell (or each query location), IDW calculates a weighted average of nearby sample points, 
+# with weights inversely proportional to distance. The weight is computed as 'w = 1/distance'.
 
 # x, y: coordinates
 # z: temperature values
@@ -12,9 +15,6 @@ idw_interpol <- function(x, y, z, grid_size = 50) {
   x_seq <- seq(min(x), max(x), length.out = grid_size)
   y_seq <- seq(min(y), max(y), length.out = grid_size)
   grid <- expand.grid(x = x_seq, y = y_seq)
-
-  # A dummy "interpolation": we just do a distance-weighted average, or something simplistic
-  # For real interpolation, use e.g. fields::interp.surface, gstat, akima, etc.
   
   z_pred <- sapply(seq_len(nrow(grid)), function(i) {
     dist <- sqrt((grid$x[i] - x)^2 + (grid$y[i] - y)^2)  # distance to each measured point
