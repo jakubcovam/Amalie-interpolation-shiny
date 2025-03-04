@@ -1,6 +1,11 @@
 # ---------------------------------------------
-# Inverse Distance Weighting - IDW
+# Akima linear interpolation
 # ---------------------------------------------
+
+# It triangulates the data domain and linearly interpolates within each triangle, producing 
+# a continuous surface.
+
+library(akima)
 
 # x, y: coordinates
 # z: temperature values
@@ -8,18 +13,25 @@
 
 akima_interpol <- function(x, y, z, grid_size = 50) {
   
-  # Create a grid for interpolation
+  # Create a regular grid for x and y
   x_seq <- seq(min(x), max(x), length.out = grid_size)
   y_seq <- seq(min(y), max(y), length.out = grid_size)
-  grid <- expand.grid(x = x_seq, y = y_seq)
   
-  z_pred <- sapply(seq_len(nrow(grid)), function(i) {
-    dist <- sqrt((grid$x[i] - x)^2 + (grid$y[i] - y)^2)  # distance to each measured point
-    w <- 1 / (dist + 1e-6)  # weights
-    sum(z * w) / sum(w)
-  })
+  # Make a 2D linear interpolation
+  interp_res <- akima::interp(
+    x = x,
+    y = y,
+    z = z,
+    xo = x_seq,
+    yo = y_seq,
+    linear = TRUE,  # linear interpolation
+    duplicate = "mean" # how to handle duplicate points
+  )
+
+  # Convert the akima output to a data frame
+  grid_df <- expand.grid(x = interp_res$x, y = interp_res$y)
+  grid_df$z_pred <- as.vector(interp_res$z)
   
-  grid$z_pred <- z_pred
-  return(grid)
+  return(grid_df)
 }
 # ---------------------------------------------
