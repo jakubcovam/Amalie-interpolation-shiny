@@ -13,9 +13,6 @@ kriging_interpol <- function(x, y, z, grid_size = 50) {
   y_seq <- seq(min(y), max(y), length.out = grid_size)
   grid <- expand.grid(x = x_seq, y = y_seq)
   
-  # A dummy "interpolation": we just do a distance-weighted average, or something simplistic
-  # For real interpolation, use e.g. fields::interp.surface, gstat, akima, etc.
-  
   z_pred <- sapply(seq_len(nrow(grid)), function(i) {
     dist <- sqrt((grid$x[i] - x)^2 + (grid$y[i] - y)^2)  # distance to each measured point
     w <- 1 / (dist + 1e-6)  # weights
