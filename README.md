@@ -13,7 +13,7 @@ The user has an option of rendering interpolation map, which is still under deve
 - ✅ **base IDW**
 - ✅ **IDW using _gstat_ library**
 - 🛠️ **Kriging**
-- 🛠️ **Akima Linear**
+- ✅ **Akima Linear**
 - 🛠️ **...**
 
 ---
