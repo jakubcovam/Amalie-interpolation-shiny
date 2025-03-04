@@ -10,6 +10,7 @@ library(data.table)
 # Import source scripts
 # ---------------------------------------------
 source("interp_idw.R")  
+source("interp_idw_gstat.R")  
 source("interp_kriging.R") 
 source("interp_akima.R") 
 # ---------------------------------------------
@@ -17,7 +18,7 @@ source("interp_akima.R")
 # ---------------------------------------------
 # Upload data for analysis
 # ---------------------------------------------
-#data_merged_setected_times = read.csv("output/data_merged_setected_times.csv")
+# data_merged_setected_times = read.csv("output/data_merged_setected_times.csv")
 df_all <- na.omit(data_merged_setected_times)
 
 # ---------------------------------------------
@@ -26,7 +27,7 @@ df_all <- na.omit(data_merged_setected_times)
 # Define UI
 # ---------------------------------------------
 ui <- fluidPage(
-  titlePanel("Amalie - temperature and moisture interactive graph"),
+  titlePanel("Amalie - soil temperature and moisture interactive graph"),
   
   sidebarLayout(
     sidebarPanel(
@@ -41,7 +42,7 @@ ui <- fluidPage(
       selectInput("tempChoice", "Choose variable:", 
                   choices = c("T1", "T2", "T3", "moisture"), selected = "T1"),
       selectInput("interpMethod", "Choose interpolation method:", 
-                  choices = c("IDW", "Kriging", "Akima Linear"), selected = "IDW"),
+                  choices = c("IDW", "IDWgstat", "Kriging", "AkimaLinear"), selected = "IDW"),
       checkboxInput("interp", "Show Interpolation", value = FALSE)
     ),
     mainPanel(
@@ -89,6 +90,8 @@ server <- function(input, output, session) {
     # Call the chosen function
     if (method == "IDW") {
       interp_df <- idw_interpol(x, y, z)
+    } else if (method == "IDWgstat") {
+      interp_df <- idw_gstat_interpol(x, y, z)
     } else if (method == "Kriging") {
       interp_df <- kriging_interpol(x, y, z)
     } else {
@@ -122,7 +125,7 @@ server <- function(input, output, session) {
     # If the user checked "Show Interpolation", add a trace for the interpolated surface
     if (input$interp) {
       interp_df <- interpolation_data()
-
+      
       plt <- plt %>%
         add_trace(
           data = interp_df,
@@ -154,7 +157,7 @@ server <- function(input, output, session) {
       
     }
     
-   # Measurements without interpolation
+    # Measurements without interpolation
     plt <- plt %>%
       add_trace(
         data = dat,
